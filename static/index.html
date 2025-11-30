@@ -1,11 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
-    
+
+<body align="center">
+
+    <div align="center">
+
+        <h1 style="color: blue; font-family: Arial, Helvetica, sans-serif;">Merhaba</h1>
+
+        <div style="
+        align-self: center;
+        margin-top: 10%;
+        margin-left: 37.5%;
+        margin-right: 37.5%;
+        border: 1px solid; 
+        border-radius: 10px;
+        background-color: aqua;
+        ">
+            <form action="/api/login" method="post">
+
+                <label for="kullanici_adi" style="display: block; margin-bottom: 5px; font-weight: bold;">Kullanıcı Adı
+                    / E-posta:</label>
+                <input type="text" id="kullanici_adi" name="kullanici_adi"
+                    style="width: 90%; padding: 10px; margin: 15px; border: 1px solid #dddddd; border-radius: 4px; box-sizing: border-box;"
+                    required>
+
+                <label for="sifre" style="display: block; margin-bottom: 5px; font-weight: bold;">Şifre:</label>
+                <input type="password" id="sifre" name="sifre"
+                    style="width: 90%; padding: 10px; margin: 15px; border: 1px solid #dddddd; border-radius: 4px; box-sizing: border-box;"
+                    required>
+
+                <button type="submit" style="
+                            width: 100%; 
+                            padding: 12px; 
+                            background-color: #007bff; 
+                            color: white; 
+                            border: none; 
+                            border-radius: 4px; 
+                            font-size: 16px; 
+                            cursor: pointer;
+                        ">
+                    Giriş Yap
+                </button>
+            </form>
+
+        </div>
+    </div>
 </body>
+
 </html>
