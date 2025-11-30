@@ -7,5 +7,5 @@ pub fn write_mes_to_file(mes:String, img_path:String){
     let enc = Encoder::new(loadbyte, destination_img);
     let result = enc.encode_alpha();
 
-    save_image_buffer(result, "saklanmis_mesaj.png".to_string())
+    save_image_buffer(result, "static/saklanmis_mesaj.png".to_string())
 }
