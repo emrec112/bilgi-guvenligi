@@ -6,9 +6,35 @@ use hyper_util::rt::{TokioIo, TokioTimer};
 use std::convert::Infallible;
 use std::error::Error;
 use std::net::SocketAddr;
+use std::path::Path;
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
 use tokio::net::TcpListener;
+
+async fn serve_file(path: impl AsRef<Path>) -> Response<Full<Bytes>> {
+    match File::open(path).await {
+        Ok(mut file) => {
+            let mut buf = vec![];
+            if let Err(e) = file.read_to_end(&mut buf).await {
+                Response::new(Full::new(Bytes::from(format!("Error reading file: {}", e))))
+            } else {
+                Response::builder()
+                    .header(
+                        "Content-Type",
+                        infer::get(&buf)
+                            .and_then(|t| Some(infer::Type::mime_type(&t)))
+                            .unwrap_or_default(),
+                    )
+                    .body(Full::new(Bytes::from(buf)))
+                    .unwrap()
+            }
+        }
+        _ => Response::builder()
+            .status(404)
+            .body(Full::new(Bytes::from(format!("404 Not Found"))))
+            .unwrap(),
+    }
+}
 
 #[allow(unused_variables)]
 async fn service(
@@ -19,27 +45,20 @@ async fn service(
     let path = parts.uri.path().trim_matches('/');
 
     println!("{}", path);
+    match path.split_once('/') {
+        Some(("static", sub_path)) => Ok(serve_file(format!("static/{}", sub_path)).await),
 
-    if let Some(("static", path)) = path.split_once("/") {
-        Ok(Response::builder()
-            .body(Full::new(Bytes::from({
-                let mut buf = vec![];
-                let a = File::open(format!("static/{path}"))
-                    .await
-                    .unwrap()
-                    .read_to_end(&mut buf).await;
-                // println!("{:?}", buf);
-                buf
-            })))
-            .unwrap())
-    } else if path.is_empty() {
-        todo!()
-    } else {
-        Ok(Response::builder()
+        None if path.is_empty() => Ok(serve_file("static/index.html".to_string()).await),
+
+        Some(("api", sub_path)) => {
+            todo!()
+        }
+
+        _ => Ok(Response::builder()
             .status(404)
             .header("Content-Type", "text/plain")
             .body(Full::new(Bytes::from("404 Not Found")))
-            .unwrap())
+            .unwrap()),
     }
 }
 
